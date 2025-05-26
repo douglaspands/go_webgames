@@ -22,7 +22,7 @@ func (r *Repository) GetEmulators() []Emulator {
 
 func (r *Repository) GetEmulator(console string) (*Emulator, error) {
 	for _, emulator := range r.GetEmulators() {
-		if emulator.Name == console {
+		if emulator.Description == console {
 			return &emulator, nil
 		}
 	}

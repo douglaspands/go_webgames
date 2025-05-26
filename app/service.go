@@ -22,7 +22,7 @@ func (s *Service) GameplayDetail(console string, game string) *Gameplay {
 	emulator, _ := s.repository.GetEmulator(console)
 	gameplay := &Gameplay{
 		Emulator:        emulator.Name,
-		Console:         console,
+		Console:         emulator.Description,
 		RomName:         game,
 		RomUrl:          "",
 		BiosUrl:         "",

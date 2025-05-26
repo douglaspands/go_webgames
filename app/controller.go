@@ -38,6 +38,10 @@ func (c *Controller) RomList(gc *gin.Context) {
 }
 
 func (c *Controller) RomDownload(gc *gin.Context) {
+	if gc.Request.Method == "HEAD" {
+		gc.Status(http.StatusOK)
+		return
+	}
 	path := gc.Param("path")
 	bpath, _ := base64.StdEncoding.DecodeString(path)
 	url := string(bpath)
@@ -49,16 +53,14 @@ func (c *Controller) RomDownload(gc *gin.Context) {
 	}
 	defer resp.Body.Close()
 
-	if gc.Request.Method == "HEAD" {
-		gc.Header("Content-Length", fmt.Sprintf("%d", resp.ContentLength))
-		gc.Status(http.StatusOK)
-		return
-	}
-
 	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
 }
 
 func (c *Controller) BiosDownload(gc *gin.Context) {
+	if gc.Request.Method == "HEAD" {
+		gc.Status(http.StatusOK)
+		return
+	}
 	path, _ := base64.StdEncoding.DecodeString(gc.Param("path"))
 	url := string(path)
 
@@ -68,12 +70,6 @@ func (c *Controller) BiosDownload(gc *gin.Context) {
 		return
 	}
 	defer resp.Body.Close()
-
-	if gc.Request.Method == "HEAD" {
-		gc.Header("Content-Length", fmt.Sprintf("%d", resp.ContentLength))
-		gc.Status(http.StatusOK)
-		return
-	}
 
 	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
 }
