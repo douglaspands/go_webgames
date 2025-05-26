@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -46,7 +47,7 @@ func (r *Repository) GetRoms(console string) []Rom {
 			continue
 		}
 		result = append(result, Rom{
-			Name: rom.Data,
+			Name: strings.TrimSuffix(rom.Data, filepath.Ext(rom.Data)),
 			URL:  urlConsoleBase + url.PathEscape(rom.Data),
 		})
 	}

@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,11 +19,15 @@ func (c *Controller) GetIndex(gc *gin.Context) {
 }
 
 func (c *Controller) GameplayRedirect(gc *gin.Context) {
-	gc.Redirect(http.StatusFound, fmt.Sprintf("/gameplay/%s/%s", gc.PostFormMap("emulator"), gc.PostFormMap("rom")))
+	emulator := gc.PostForm("emulator")
+	rom := gc.PostForm("rom")
+	gc.Redirect(http.StatusFound, fmt.Sprintf("/gameplay/%s/%s", url.PathEscape(emulator), url.PathEscape(rom)))
 }
 
 func (c *Controller) Gameplay(gc *gin.Context) {
-	gameplay := c.service.GameplayDetail(gc.Param("console"), gc.Param("game"))
+	console := gc.Param("console")
+	game := gc.Param("game")
+	gameplay := c.service.GameplayDetail(console, game)
 	gc.HTML(http.StatusOK, "gameplay.html", gin.H{"data": gameplay})
 }
 
@@ -33,8 +38,9 @@ func (c *Controller) RomList(gc *gin.Context) {
 }
 
 func (c *Controller) RomDownload(gc *gin.Context) {
-	path, _ := base64.StdEncoding.DecodeString(gc.Param("path"))
-	url := string(path)
+	path := gc.Param("path")
+	bpath, _ := base64.StdEncoding.DecodeString(path)
+	url := string(bpath)
 
 	resp, err := http.Get(url)
 	if err != nil {

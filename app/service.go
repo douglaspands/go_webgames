@@ -24,20 +24,20 @@ func (s *Service) GameplayDetail(console string, game string) *Gameplay {
 		Emulator:        emulator.Name,
 		Console:         console,
 		RomName:         game,
-		RomURL:          "",
-		BiosURL:         "",
-		BiosDownloadURL: "",
+		RomUrl:          "",
+		BiosUrl:         "",
+		BiosDownloadUrl: "",
 		Options:         s.emulatorOptions,
 		Threads:         false,
 	}
 
 	rom, _ := s.repository.GetRom(console, game)
 	if rom.URL != "" {
-		gameplay.RomURL = fmt.Sprintf("/roms/download/%s", base64.StdEncoding.EncodeToString([]byte(rom.URL)))
+		gameplay.RomUrl = fmt.Sprintf("/roms/download/%s", base64.StdEncoding.EncodeToString([]byte(rom.URL)))
 	}
 	if emulator.BiosURL != "" {
 		biosURLEncoded := base64.StdEncoding.EncodeToString([]byte(emulator.BiosURL))
-		gameplay.BiosDownloadURL = fmt.Sprintf("/bios/download/%s", biosURLEncoded)
+		gameplay.BiosDownloadUrl = fmt.Sprintf("/bios/download/%s", biosURLEncoded)
 	}
 
 	return gameplay
