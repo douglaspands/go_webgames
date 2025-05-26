@@ -36,6 +36,7 @@
                 EJS_biosUrl = '{{ .data.BiosUrl }}';
                 EJS_gameUrl = '{{ .data.RomUrl }}';
                 EJS_volume = 1;
+                EJS_defaultOptions = JSON.parse("{{ .data.Options }}");
                 EJS_language = 'pt-BR';        
             </script>
             <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>

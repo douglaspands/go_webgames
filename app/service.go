@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 )
 
@@ -20,6 +21,7 @@ func (s *Service) ListGames(console string) []Rom {
 
 func (s *Service) GameplayDetail(console string, game string) *Gameplay {
 	emulator, _ := s.repository.GetEmulator(console)
+	jsonEmulatorOptions, _ := json.Marshal(s.emulatorOptions)
 	gameplay := &Gameplay{
 		Emulator:        emulator.Name,
 		Console:         emulator.Description,
@@ -27,7 +29,7 @@ func (s *Service) GameplayDetail(console string, game string) *Gameplay {
 		RomUrl:          "",
 		BiosUrl:         "",
 		BiosDownloadUrl: "",
-		Options:         s.emulatorOptions,
+		Options:         string(jsonEmulatorOptions),
 		Threads:         false,
 	}
 

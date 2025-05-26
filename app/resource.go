@@ -13,12 +13,12 @@ type Rom struct {
 }
 
 type Gameplay struct {
-	Emulator        string                 `json:"emulator"`
-	Console         string                 `json:"console"`
-	RomName         string                 `json:"romName"`
-	RomUrl          string                 `json:"romUrl"`
-	BiosDownloadUrl string                 `json:"biosDownloadUrl"`
-	BiosUrl         string                 `json:"biosUrl"`
-	Options         map[string]interface{} `json:"options"`
-	Threads         bool                   `json:"threads"`
+	Emulator        string `json:"emulator"`
+	Console         string `json:"console"`
+	RomName         string `json:"romName"`
+	RomUrl          string `json:"romUrl"`
+	BiosDownloadUrl string `json:"biosDownloadUrl"`
+	BiosUrl         string `json:"biosUrl"`
+	Options         string `json:"options"`
+	Threads         bool   `json:"threads"`
 }
