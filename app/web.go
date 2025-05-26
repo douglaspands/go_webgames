@@ -1,20 +1,13 @@
 package app
 
 import (
-	"path/filepath"
-
 	"github.com/gin-gonic/gin"
 )
 
-// A função createApp é responsável por criar um aplicativo web.
 func CreateApp() *gin.Engine {
 	r := gin.Default()
-
-	templatesDir := filepath.Dir("./templates")
-	staticDir := filepath.Dir("./static")
-
-	r.LoadHTMLGlob(templatesDir + "/*.html")
-	r.Static("/static", staticDir)
+	r.LoadHTMLGlob("templates/*")
+	r.Static("/static", "./static")
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 

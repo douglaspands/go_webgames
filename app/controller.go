@@ -10,7 +10,7 @@ import (
 
 func getIndex(c *gin.Context) {
 	emulators := getEmulators()
-	c.HTML(http.StatusOK, "index.html", gin.H{"emulators": emulators})
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"emulators": emulators})
 }
 
 func gameplayRedirect(c *gin.Context) {
@@ -19,7 +19,7 @@ func gameplayRedirect(c *gin.Context) {
 
 func gameplay(c *gin.Context) {
 	context := gameplayDetail(c.Param("console"), c.Param("game"))
-	c.HTML(http.StatusOK, "gameplay.html", gin.H{"context": context})
+	c.HTML(http.StatusOK, "gameplay.tmpl", gin.H{"context": context})
 }
 
 func romList(c *gin.Context) {
