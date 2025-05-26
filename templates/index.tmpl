@@ -28,9 +28,9 @@
                     <label for="inputEmulator" class="form-label">Console</label>
                     <select id="inputEmulator" name="emulator" class="form-select">
                         <option selected disabled>Escolha um console...</option>
-                        {% for emulator in context.emulators %}
-                        <option value="{{ .emulator.description }}">{{ .emulator.description }}</option>
-                        {% endfor %}
+                        {{range .context.emulators}}
+                        <option value="{{.Name}}">{{.Description}}</option>
+                        {{end}}
                     </select>
                 </div>
             </div>

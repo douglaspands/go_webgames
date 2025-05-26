@@ -30,7 +30,7 @@ func getEmulators() []Emulator {
 
 func getEmulator(console string) Emulator {
 	for _, emulator := range getEmulators() {
-		if emulator.Description == console {
+		if emulator.Name == console {
 			return emulator
 		}
 	}

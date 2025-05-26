@@ -10,7 +10,7 @@ import (
 
 func getIndex(c *gin.Context) {
 	emulators := getEmulators()
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"emulators": emulators})
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"context": map[string]interface{}{"emulators": emulators}})
 }
 
 func gameplayRedirect(c *gin.Context) {
