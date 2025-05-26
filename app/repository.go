@@ -3,13 +3,11 @@ package app
 import (
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
-	"path/filepath"
+	"net/url"
 	"sort"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/antchfx/htmlquery"
 )
 
 type Repository struct {
@@ -31,46 +29,25 @@ func (r *Repository) GetEmulator(console string) (*Emulator, error) {
 }
 
 func (r *Repository) GetRoms(console string) []Rom {
-
+	var result []Rom
 	emulator, _ := r.GetEmulator(console)
 	root := emulator.Root
-	urlConsoleBase := fmt.Sprintf("%s/%s/", r.urlBase, root)
-
-	resp, err := http.Get(urlConsoleBase)
+	urlConsoleBase := fmt.Sprintf("%s/%s/", r.urlBase, url.PathEscape(root))
+	doc, err := htmlquery.LoadURL(urlConsoleBase)
 	if err != nil {
-		fmt.Println("Error fetching rom list:", err)
-		return nil
+		return result
 	}
-	defer resp.Body.Close()
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("Error reading response body:", err)
-		return nil
-	}
-
-	doc, err := html.Parse(strings.NewReader(string(bodyBytes)))
-	if err != nil {
-		fmt.Println("Error parsing HTML:", err)
-		return nil
-	}
-
-	var result []Rom
-	stack := r.walkDoc(doc)
-
-	for idx, romName := range stack {
+	roms := htmlquery.Find(doc, "//*[@id='list']/tbody/tr/td[1]/a//text()")
+	for idx, rom := range roms {
 		if idx == 0 {
 			continue
 		}
-		filePath := filepath.Join(filepath.Dir(urlConsoleBase), romName)
-
-		if r.containsIgnoreWord(romName) {
+		if r.containsIgnoreWord(rom.Data) {
 			continue
 		}
-
 		result = append(result, Rom{
-			Name: filePath,
-			URL:  urlConsoleBase + filePath,
+			Name: rom.Data,
+			URL:  urlConsoleBase + url.PathEscape(rom.Data),
 		})
 	}
 	return result
@@ -93,24 +70,12 @@ func (r *Repository) GetRom(console string, game string) (*Rom, error) {
 }
 
 func (r Repository) containsIgnoreWord(word string) bool {
-	for _, ignore := range []string{"DLC", "Update", "Demo", "Theme"} {
+	for _, ignore := range []string{"DLC", "Update", "Demo", "Theme", "Test"} {
 		if strings.Contains(word, ignore) {
 			return true
 		}
 	}
 	return false
-}
-
-func (r Repository) walkDoc(node *html.Node) []string {
-	var stack []string = make([]string, 0)
-	if node.Type == html.ElementNode && node.Data == "tr" {
-		for c := node.FirstChild; c != nil; c = c.NextSibling {
-			if c.Type == html.TextNode && strings.HasPrefix(c.Parent.Data, "td[1]/a") {
-				stack = append(stack, c.Data)
-			}
-		}
-	}
-	return stack
 }
 
 func NewRepository() *Repository {

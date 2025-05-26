@@ -18,12 +18,13 @@ func (s *Service) ListGames(console string) []Rom {
 	return s.repository.GetRoms(console)
 }
 
-func (s *Service) GameplayDetail(console string, game string) Gameplay {
+func (s *Service) GameplayDetail(console string, game string) *Gameplay {
 	emulator, _ := s.repository.GetEmulator(console)
-	context := Gameplay{
+	gameplay := &Gameplay{
 		Emulator:        emulator.Name,
 		Console:         console,
 		RomName:         game,
+		RomURL:          "",
 		BiosURL:         "",
 		BiosDownloadURL: "",
 		Options:         s.emulatorOptions,
@@ -32,14 +33,14 @@ func (s *Service) GameplayDetail(console string, game string) Gameplay {
 
 	rom, _ := s.repository.GetRom(console, game)
 	if rom.URL != "" {
-		context.RomURL = fmt.Sprintf("/roms/download/%s", base64.StdEncoding.EncodeToString([]byte(rom.URL)))
+		gameplay.RomURL = fmt.Sprintf("/roms/download/%s", base64.StdEncoding.EncodeToString([]byte(rom.URL)))
 	}
 	if emulator.BiosURL != "" {
 		biosURLEncoded := base64.StdEncoding.EncodeToString([]byte(emulator.BiosURL))
-		context.BiosDownloadURL = fmt.Sprintf("/bios/download/%s", biosURLEncoded)
+		gameplay.BiosDownloadURL = fmt.Sprintf("/bios/download/%s", biosURLEncoded)
 	}
 
-	return context
+	return gameplay
 }
 
 func NewService() *Service {

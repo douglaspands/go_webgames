@@ -29,7 +29,7 @@ func (c *Controller) Gameplay(gc *gin.Context) {
 func (c *Controller) RomList(gc *gin.Context) {
 	console := gc.DefaultQuery("console", "")
 	roms := c.service.ListGames(console)
-	gc.JSON(http.StatusOK, gin.H{"roms": roms})
+	gc.JSON(http.StatusOK, gin.H{"data": roms})
 }
 
 func (c *Controller) RomDownload(gc *gin.Context) {
