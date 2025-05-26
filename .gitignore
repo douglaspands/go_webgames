@@ -6,3 +6,4 @@
 *.swp
 webgames
 webgames.exe
+__debug_*
