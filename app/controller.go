@@ -8,62 +8,72 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getIndex(c *gin.Context) {
-	emulators := getEmulators()
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"context": map[string]interface{}{"emulators": emulators}})
+type Controller struct {
+	service *Service
 }
 
-func gameplayRedirect(c *gin.Context) {
-	c.Redirect(http.StatusFound, fmt.Sprintf("/gameplay/%s/%s", c.PostFormMap("emulator"), c.PostFormMap("rom")))
+func (c *Controller) GetIndex(gc *gin.Context) {
+	emulators := c.service.ListConsoles()
+	gc.HTML(http.StatusOK, "index.html", gin.H{"data": emulators})
 }
 
-func gameplay(c *gin.Context) {
-	context := gameplayDetail(c.Param("console"), c.Param("game"))
-	c.HTML(http.StatusOK, "gameplay.tmpl", gin.H{"context": context})
+func (c *Controller) GameplayRedirect(gc *gin.Context) {
+	gc.Redirect(http.StatusFound, fmt.Sprintf("/gameplay/%s/%s", gc.PostFormMap("emulator"), gc.PostFormMap("rom")))
 }
 
-func romList(c *gin.Context) {
-	console := c.DefaultQuery("console", "")
-	roms := getRoms(console)
-	c.JSON(http.StatusOK, gin.H{"roms": roms})
+func (c *Controller) Gameplay(gc *gin.Context) {
+	gameplay := c.service.GameplayDetail(gc.Param("console"), gc.Param("game"))
+	gc.HTML(http.StatusOK, "gameplay.html", gin.H{"data": gameplay})
 }
 
-func romDownload(c *gin.Context) {
-	path, _ := base64.StdEncoding.DecodeString(c.Param("path"))
+func (c *Controller) RomList(gc *gin.Context) {
+	console := gc.DefaultQuery("console", "")
+	roms := c.service.ListGames(console)
+	gc.JSON(http.StatusOK, gin.H{"roms": roms})
+}
+
+func (c *Controller) RomDownload(gc *gin.Context) {
+	path, _ := base64.StdEncoding.DecodeString(gc.Param("path"))
 	url := string(path)
 
 	resp, err := http.Get(url)
 	if err != nil {
-		c.Error(err)
+		gc.Error(err)
 		return
 	}
 	defer resp.Body.Close()
 
-	if c.Request.Method == "HEAD" {
-		c.Header("Content-Length", fmt.Sprintf("%d", resp.ContentLength))
-		c.Status(http.StatusOK)
+	if gc.Request.Method == "HEAD" {
+		gc.Header("Content-Length", fmt.Sprintf("%d", resp.ContentLength))
+		gc.Status(http.StatusOK)
 		return
 	}
 
-	c.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
+	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
 }
 
-func biosDownload(c *gin.Context) {
-	path, _ := base64.StdEncoding.DecodeString(c.Param("path"))
+func (c *Controller) BiosDownload(gc *gin.Context) {
+	path, _ := base64.StdEncoding.DecodeString(gc.Param("path"))
 	url := string(path)
 
 	resp, err := http.Get(url)
 	if err != nil {
-		c.Error(err)
+		gc.Error(err)
 		return
 	}
 	defer resp.Body.Close()
 
-	if c.Request.Method == "HEAD" {
-		c.Header("Content-Length", fmt.Sprintf("%d", resp.ContentLength))
-		c.Status(http.StatusOK)
+	if gc.Request.Method == "HEAD" {
+		gc.Header("Content-Length", fmt.Sprintf("%d", resp.ContentLength))
+		gc.Status(http.StatusOK)
 		return
 	}
 
-	c.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
+	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
+}
+
+func NewController() *Controller {
+	return &Controller{
+		service: NewService(),
+	}
 }

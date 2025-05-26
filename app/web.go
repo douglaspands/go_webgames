@@ -11,14 +11,15 @@ func CreateApp() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
-	r.GET("/", getIndex)
-	r.POST("/gameplay", gameplayRedirect)
-	r.GET("/gameplay/:console/:game", gameplay)
-	r.GET("/roms", romList)
-	r.Handle("GET", "/roms/download/*path", romDownload)
-	r.Handle("HEAD", "/roms/download/*path", romDownload)
-	r.Handle("GET", "/bios/download/*path", biosDownload)
-	r.Handle("HEAD", "/bios/download/*path", biosDownload)
+	controller := NewController()
+	r.GET("/", controller.GetIndex)
+	r.POST("/gameplay", controller.GameplayRedirect)
+	r.GET("/gameplay/:console/:game", controller.Gameplay)
+	r.GET("/roms", controller.RomList)
+	r.Handle("GET", "/roms/download/*path", controller.RomDownload)
+	r.Handle("HEAD", "/roms/download/*path", controller.RomDownload)
+	r.Handle("GET", "/bios/download/*path", controller.BiosDownload)
+	r.Handle("HEAD", "/bios/download/*path", controller.BiosDownload)
 
 	return r
 }

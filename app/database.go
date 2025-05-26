@@ -1,6 +1,6 @@
 package app
 
-var EMULATORS = []Emulator{
+var emulatorTable = []Emulator{
 	{Name: "nes", Description: "Nintendo - Nintendo Entertainment System", Root: "Nintendo - Nintendo Entertainment System (Headered)"},
 	{Name: "snes", Description: "Nintendo - Super Nintendo Entertainment System", Root: "Nintendo - Super Nintendo Entertainment System"},
 	{Name: "gba", Description: "Nintendo - Game Boy", Root: "Nintendo - Game Boy"},
