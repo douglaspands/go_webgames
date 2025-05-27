@@ -36,11 +36,12 @@ jobs:
 
     - name: Zip the executable
       run: |
-        	rm -Rf /tmp/webgames && \
-            mkdir -p /tmp/webgames && \
-            cp -Rf webgames.exe templates static /tmp/webgames && \
-            cd /tmp && zip -r $(PWD)/webgames-${{ env.TAG_NAME }}-windows-x86_64.zip ./webgames && \
-            cd $(PWD) && rm -Rf /tmp/webgames
+        rm -Rf /tmp/webgames
+        mkdir -p /tmp/webgames
+        cp -Rf webgames.exe templates static /tmp/webgames
+        cd /tmp && zip -r $(PWD)/webgames-${{ env.TAG_NAME }}-windows-x86_64.zip ./webgames
+        cd $(PWD)
+        rm -Rf /tmp/webgames
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
