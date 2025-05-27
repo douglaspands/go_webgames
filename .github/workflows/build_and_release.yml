@@ -1,0 +1,53 @@
+name: Build and Zip Executable
+
+on:
+  release:
+    types: [created]
+
+  workflow_dispatch:
+    inputs:
+      TAG_NAME:
+        description: 'Tag name that the major tag will point to'
+        required: true
+
+env:
+  TAG_NAME: ${{ github.event.inputs.TAG_NAME || github.event.release.tag_name }}
+
+permissions:
+  contents: write
+
+jobs:
+
+  linux-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24'
+
+    - name: Generate executable
+      run: |
+        GOARCH=amd64 GOOS=windows go build -trimpath -o ./webgames.exe main.go
+
+    - name: Zip the executable
+      run: |
+        	rm -Rf /tmp/webgames && \
+            mkdir -p /tmp/webgames && \
+            cp -Rf webgames.exe templates static /tmp/webgames && \
+            cd /tmp && zip -r $(PWD)/webgames-${{ env.TAG_NAME }}-windows-x86_64.zip ./webgames && \
+            cd $(PWD) && rm -Rf /tmp/webgames
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./webgames-${{ env.TAG_NAME }}-windows-x86_64.zip
+        asset_name: webgames-${{ env.TAG_NAME }}-windows-x86_64.zip
+        asset_content_type: application/zip
