@@ -23,12 +23,27 @@ Siga os passos abaixo para configurar e executar a aplicação localmente:
     cd go_webgames
     ```
 
+2. Compile o projeto:
+    ```bash
+    make build/linux
+    ```
+    ou no Windows:
+    ```bash
+    make build/windows
+    ```
+
+3. Execute o projeto:
+    ```bash
+    make run/linux
+    ```
+    ou no Windows:
+    ```bash
+    ./webgames.exe
+    ```
+
+4. Acesse o projeto no [http://localhost:5000](http://localhost:5000).
+> De preferencia para navegadores baseados no `Chromium`.
+
 ## Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
-
-## Contato
-
-Para mais informações, entre em contato pelo email: seu-email@exemplo.com
-
-Aproveite os jogos!
