@@ -1,4 +1,4 @@
-# Py-WebGames
+# Go-WebGames
 
 Bem-vindo ao WebGames! Esta é uma aplicação web para jogar diversos jogos online, desenvolvida em GoLang utilizando EmulatorJS.
 
