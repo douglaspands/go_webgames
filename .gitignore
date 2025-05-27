@@ -4,3 +4,6 @@
 *.tmp
 *.bak
 *.swp
+webgames
+webgames.exe
+__debug_*
