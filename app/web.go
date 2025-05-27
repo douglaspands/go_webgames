@@ -8,6 +8,7 @@ func CreateApp() *gin.Engine {
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
 	r.Static("/static", "./static")
+	r.StaticFile("/favicon.ico", "./static/favicon.ico")
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 

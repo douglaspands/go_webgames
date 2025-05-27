@@ -71,7 +71,7 @@ func (r *Repository) GetRom(console string, game string) (*Rom, error) {
 }
 
 func (r Repository) containsIgnoreWord(word string) bool {
-	for _, ignore := range []string{"DLC", "Update", "Demo", "Theme", "Test"} {
+	for _, ignore := range []string{"DLC", "Update", "Demo", "Theme", "Test", "BIOS"} {
 		if strings.Contains(word, ignore) {
 			return true
 		}
