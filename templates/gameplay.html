@@ -19,25 +19,26 @@
     </nav>
     <div class="container">
         <p>
-            <div style='text-align:center;'>
+            <div style="text-align:center;">
                 <h3>{{.data.Console}}<br>{{.data.RomName}}</h3>
             </div>
         </p>
         <p>
-            <div style='width:640px;height:480px;max-width:100%;margin:auto;'>
-                <div id='game'></div>
+            <div style="width:640px;height:480px;max-width:100%;margin:auto;">
+                <div id="game"></div>
             </div>
-            <script type='text/javascript'>
-                EJS_player = '#game';
-                EJS_gameName = '{{.data.RomName}}';
+            <script type="text/javascript">
+                EJS_player = "#game";
+                EJS_gameName = "{{.data.RomName}}";
                 EJS_gameID = 1;
                 EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-                EJS_core = '{{.data.Emulator}}';
-                EJS_biosUrl = '{{.data.BiosUrl}}';
-                EJS_gameUrl = '{{.data.RomUrl}}';
+                EJS_core = "{{.data.Emulator}}";
+                EJS_gameUrl = "{{.data.RomUrl}}";
+                {{if .data.BiosUrl}}EJS_biosUrl = "{{.data.BiosUrl}}";{{end}}
+                {{if .data.Threads}}EJS_threads = {{.data.Threads}};{{end}}
                 EJS_volume = 1;
                 EJS_defaultOptions = JSON.parse("{{.data.Options}}");
-                EJS_language = 'pt-BR';        
+                EJS_language = "pt-BR";        
             </script>
             <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
         </p>

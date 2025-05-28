@@ -23,7 +23,7 @@ func CreateApp() *gin.Engine {
 	r.GET("/", controller.GetIndex)
 	r.POST("/gameplay", controller.GameplayRedirect)
 	r.GET("/gameplay/:console/:game", controller.Gameplay)
-	r.GET("/roms", controller.ListGames)
+	r.GET("/games", controller.ListGames)
 	r.Handle("HEAD", "/download/:path", controller.Download)
 	r.Handle("GET", "/download/:path", controller.Download)
 
