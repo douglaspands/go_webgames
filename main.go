@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
+	"runtime"
 	"syscall"
 	"time"
 	webgames "webgames/app"
@@ -26,6 +29,13 @@ func main() {
 		}
 	}()
 	log.Printf("starting server on http://localhost%s\n", port)
+
+	if runtime.GOOS == "windows" {
+		go func() {
+			time.Sleep(3 * time.Second)
+			exec.Command(fmt.Sprintf("powershell.exe -c 'start http://localhost%s'", port))
+		}()
+	}
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)

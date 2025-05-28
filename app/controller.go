@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,6 +50,7 @@ func (c *Controller) Download(gc *gin.Context) {
 	defer resp.Body.Close()
 
 	if gc.Request.Method == "HEAD" {
+		gc.Header("Content-Length", strconv.FormatInt(resp.ContentLength, 10))
 		gc.Status(http.StatusOK)
 		return
 	}

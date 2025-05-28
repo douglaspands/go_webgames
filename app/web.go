@@ -15,10 +15,6 @@ func CreateApp() *gin.Engine {
 	r := gin.Default()
 	r.Use(gin.Recovery())
 
-	if mode == gin.ReleaseMode {
-		r.Use(gin.Logger())
-	}
-
 	r.LoadHTMLGlob("templates/*")
 	r.Static("/static", "./static")
 	r.StaticFile("/favicon.ico", "./static/favicon.ico")
