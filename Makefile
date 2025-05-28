@@ -5,7 +5,7 @@ build/windows:
 	GOARCH=amd64 GOOS=windows go build -trimpath -o ./webgames.exe main.go
 
 run/linux:
-	GIN_MODE=release ./webgames
+	./webgames
 
 compress/windows:
 	rm -Rf /tmp/webgames && \

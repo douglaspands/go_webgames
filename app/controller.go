@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,36 +32,13 @@ func (c *Controller) Gameplay(gc *gin.Context) {
 	gc.HTML(http.StatusOK, "gameplay.html", gin.H{"data": gameplay})
 }
 
-func (c *Controller) RomList(gc *gin.Context) {
+func (c *Controller) ListGames(gc *gin.Context) {
 	console := gc.DefaultQuery("console", "")
 	roms := c.service.ListGames(console)
 	gc.JSON(http.StatusOK, gin.H{"data": roms})
 }
 
-func (c *Controller) RomDownload(gc *gin.Context) {
-	if gc.Request.Method == "HEAD" {
-		gc.Status(http.StatusOK)
-		return
-	}
-	path := gc.Param("path")
-	bpath, _ := base64.StdEncoding.DecodeString(path)
-	url := string(bpath)
-
-	resp, err := http.Get(url)
-	if err != nil {
-		gc.Error(err)
-		return
-	}
-	defer resp.Body.Close()
-
-	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
-}
-
-func (c *Controller) BiosDownload(gc *gin.Context) {
-	if gc.Request.Method == "HEAD" {
-		gc.Status(http.StatusOK)
-		return
-	}
+func (c *Controller) Download(gc *gin.Context) {
 	path, _ := base64.StdEncoding.DecodeString(gc.Param("path"))
 	url := string(path)
 
@@ -70,6 +48,12 @@ func (c *Controller) BiosDownload(gc *gin.Context) {
 		return
 	}
 	defer resp.Body.Close()
+
+	if gc.Request.Method == "HEAD" {
+		gc.Header("Content-Length", strconv.FormatInt(resp.ContentLength, 10))
+		gc.Status(http.StatusOK)
+		return
+	}
 
 	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
 }
