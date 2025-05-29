@@ -1,9 +1,10 @@
 package app
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"path"
 )
 
 type Service struct {
@@ -13,6 +14,11 @@ type Service struct {
 
 func (s *Service) ListConsoles() []Emulator {
 	return s.repository.GetEmulators()
+}
+
+func (s *Service) GetConsole(console string) *Emulator {
+	emulator, _ := s.repository.GetEmulator(console)
+	return emulator
 }
 
 func (s *Service) ListGames(console string) []string {
@@ -28,21 +34,29 @@ func (s *Service) GameplayDetail(console string, game string) *Gameplay {
 	emulator, _ := s.repository.GetEmulator(console)
 	jsonEmulatorOptions, _ := json.Marshal(s.emulatorOptions)
 	gameplay := &Gameplay{
-		Emulator: emulator.Name,
-		Console:  emulator.Description,
-		RomName:  game,
-		RomUrl:   "",
-		BiosUrl:  "",
-		Options:  string(jsonEmulatorOptions),
-		Threads:  emulator.Threads,
+		Emulator:  emulator.Name,
+		Console:   emulator.Description,
+		RomName:   game,
+		RomUrl:    "",
+		RomRoute:  "",
+		BiosUrl:   "",
+		BiosRoute: "",
+		Options:   string(jsonEmulatorOptions),
+		Threads:   emulator.Threads,
 	}
 
 	rom, _ := s.repository.GetRom(console, game)
 	if rom.Url != "" {
-		gameplay.RomUrl = fmt.Sprintf("/download/%s", base64.StdEncoding.EncodeToString([]byte(rom.Url)))
+		parsedURL, _ := url.Parse(rom.Url)
+		fileName := path.Base(parsedURL.Path)
+		gameplay.RomRoute = fmt.Sprintf("/download/game/%s/%s", url.PathEscape(console), url.PathEscape(fileName))
+		gameplay.RomUrl = rom.Url
 	}
 	if emulator.BiosUrl != "" {
-		gameplay.BiosUrl = fmt.Sprintf("/download/%s", base64.StdEncoding.EncodeToString([]byte(emulator.BiosUrl)))
+		parsedURL, _ := url.Parse(emulator.BiosUrl)
+		fileName := path.Base(parsedURL.Path)
+		gameplay.BiosRoute = fmt.Sprintf("/download/bios/%s/%s", url.PathEscape(console), url.PathEscape(fileName))
+		gameplay.BiosUrl = emulator.BiosUrl
 	}
 
 	return gameplay
@@ -52,7 +66,7 @@ func NewService() *Service {
 	return &Service{
 		repository: NewRepository(),
 		emulatorOptions: map[string]interface{}{
-			// "shader":              "crt-mattias.glslp",
+			"shader":              "crt-easymode.glslp",
 			"save-state-slot":     1,
 			"save-state-location": "browser",
 		},

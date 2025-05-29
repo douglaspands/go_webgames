@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <title>{{.data.RomName}} - {{.data.Console}}</title>
+    <title>{{.data.RomName}} - {{.data.Console}} - WebGame</title>
 </head>
 <body>
     <nav class="navbar bg-body-tertiary">
@@ -29,15 +29,15 @@
             </div>
             <script type="text/javascript">
                 EJS_player = "#game";
-                EJS_gameName = "{{.data.RomName}}";
+                EJS_gameName = {{.data.RomName}};
                 EJS_gameID = 1;
                 EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-                EJS_core = "{{.data.Emulator}}";
-                EJS_gameUrl = "{{.data.RomUrl}}";
-                {{if .data.BiosUrl}}EJS_biosUrl = "{{.data.BiosUrl}}";{{end}}
+                EJS_core = {{.data.Emulator}};
+                EJS_gameUrl = {{.data.RomRoute}};
+                {{if .data.BiosUrl}}EJS_biosUrl = {{.data.BiosRoute}};{{end}}
                 {{if .data.Threads}}EJS_threads = {{.data.Threads}};{{end}}
                 EJS_volume = 1;
-                EJS_defaultOptions = JSON.parse("{{.data.Options}}");
+                EJS_defaultOptions = JSON.parse({{.data.Options}});
                 EJS_language = "pt-BR";        
             </script>
             <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
