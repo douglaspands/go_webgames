@@ -1,11 +1,12 @@
 package app
 
 import (
-	"encoding/base64"
 	"fmt"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,11 +39,34 @@ func (c *Controller) ListGames(gc *gin.Context) {
 	gc.JSON(http.StatusOK, gin.H{"data": games})
 }
 
-func (c *Controller) Download(gc *gin.Context) {
-	path, _ := base64.StdEncoding.DecodeString(gc.Param("path"))
-	url := string(path)
+func (c *Controller) GetRom(gc *gin.Context) {
+	console := gc.Param("console")
+	rom := gc.Param("rom")
+	game := strings.TrimSuffix(rom, filepath.Ext(rom))
 
-	resp, err := http.Get(url)
+	gameplay := c.service.GameplayDetail(console, game)
+
+	resp, err := http.Get(gameplay.RomUrl)
+	if err != nil {
+		gc.Error(err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if gc.Request.Method == "HEAD" {
+		gc.Header("Content-Length", strconv.FormatInt(resp.ContentLength, 10))
+		gc.Status(http.StatusOK)
+		return
+	}
+
+	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
+}
+
+func (c *Controller) GetBios(gc *gin.Context) {
+	console := gc.Param("console")
+	emulator := c.service.GetConsole(console)
+
+	resp, err := http.Get(emulator.BiosUrl)
 	if err != nil {
 		gc.Error(err)
 		return

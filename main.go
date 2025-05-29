@@ -17,6 +17,7 @@ import (
 func main() {
 	app := webgames.CreateApp()
 	port := ":5000"
+	url := fmt.Sprintf("http://localhost%s", port)
 
 	srv := &http.Server{
 		Addr:    port,
@@ -28,12 +29,14 @@ func main() {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
-	log.Printf("starting server on http://localhost%s\n", port)
+	log.Printf("starting server on %s\n", url)
 
 	if runtime.GOOS == "windows" {
 		go func() {
 			time.Sleep(3 * time.Second)
-			exec.Command(fmt.Sprintf("powershell.exe -c 'start http://localhost%s'", port))
+			if err := exec.Command("cmd", "/C", "start", url).Run(); err != nil {
+				log.Printf("failed to open '%s': %v\n", url, err)
+			}
 		}()
 	}
 
@@ -48,6 +51,5 @@ func main() {
 		log.Println("server shutdown:", err)
 	}
 	<-ctx.Done()
-	log.Println("timeout of 5 seconds.")
 	log.Println("server exiting")
 }
