@@ -18,7 +18,7 @@ permissions:
 
 jobs:
 
-  linux-build:
+  windows-build:
     runs-on: ubuntu-latest
     
     steps:
@@ -28,7 +28,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.24'
+        go-version: '1.25'
 
     - name: Generate executable
       run: |
@@ -53,3 +53,75 @@ jobs:
         asset_path: ./webgames-${{ env.TAG_NAME }}-windows-x86_64.zip
         asset_name: webgames-${{ env.TAG_NAME }}-windows-x86_64.zip
         asset_content_type: application/zip
+
+  linux-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.25'
+
+    - name: Generate executable
+      run: |
+        GOARCH=amd64 GOOS=linux go build -trimpath -o ./webgames main.go
+
+    - name: Zip the executable
+      run: |
+        rm -Rf ./_tmp/webgames
+        mkdir -p ./_tmp/webgames
+        cp -Rf webgames templates static ./_tmp/webgames
+        cd ./_tmp
+        tar -cjvf ./webgames-${{ env.TAG_NAME }}-linux-x86_64.tar.bz2 ./webgames
+        cd ..
+        rm -Rf ./_tmp/webgames
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./webgames-${{ env.TAG_NAME }}-linux-x86_64.tar.bz2
+        asset_name: webgames-${{ env.TAG_NAME }}-linux-x86_64.tar.bz2
+        asset_content_type: application/x-bzip
+
+  darwin-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.25'
+
+    - name: Generate executable
+      run: |
+        GOARCH=arm64 GOOS=darwin go build -trimpath -o ./webgames main.go
+
+    - name: Zip the executable
+      run: |
+        rm -Rf ./_tmp/webgames
+        mkdir -p ./_tmp/webgames
+        cp -Rf webgames templates static ./_tmp/webgames
+        cd ./_tmp
+        tar -cjvf ./webgames-${{ env.TAG_NAME }}-darwin-arm64.tar.bz2 ./webgames
+        cd ..
+        rm -Rf ./_tmp/webgames
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./webgames-${{ env.TAG_NAME }}-darwin-arm64.tar.bz2
+        asset_name: webgames-${{ env.TAG_NAME }}-darwin-arm64.tar.bz2
+        asset_content_type: application/x-bzip

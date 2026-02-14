@@ -15,13 +15,14 @@ type Controller struct {
 	service *Service
 }
 
-func (c Controller) setSharedArrayBufferEnabled(gc *gin.Context) {
+func (c Controller) allowSharedArrayBuffer(gc *gin.Context) {
 	gc.Header("Cross-Origin-Opener-Policy", "same-origin")
 	gc.Header("Cross-Origin-Embedder-Policy", "require-corp")
 }
 
-func (c Controller) responseHeadHttpMethod(gc *gin.Context, resp *http.Response) {
-	gc.Header("Content-Length", strconv.FormatInt(resp.ContentLength, 10))
+func (c Controller) responseHeadHttpMethod(gc *gin.Context, ContentLength int64) {
+	gc.Header("Content-Type", "application/octet-stream")
+	gc.Header("Content-Length", strconv.FormatInt(ContentLength, 10))
 	gc.Status(http.StatusOK)
 }
 
@@ -41,7 +42,7 @@ func (c *Controller) Gameplay(gc *gin.Context) {
 	game := gc.Param("game")
 	gameplay := c.service.GameplayDetail(console, game)
 	if gameplay.Threads == true {
-		c.setSharedArrayBufferEnabled(gc)
+		c.allowSharedArrayBuffer(gc)
 	}
 	gc.HTML(http.StatusOK, "gameplay.html", gin.H{"data": gameplay})
 }
@@ -67,7 +68,7 @@ func (c *Controller) GetRom(gc *gin.Context) {
 	defer resp.Body.Close()
 
 	if gc.Request.Method == "HEAD" {
-		c.responseHeadHttpMethod(gc, resp)
+		c.responseHeadHttpMethod(gc, resp.ContentLength)
 		return
 	}
 	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
@@ -85,7 +86,7 @@ func (c *Controller) GetBios(gc *gin.Context) {
 	defer resp.Body.Close()
 
 	if gc.Request.Method == "HEAD" {
-		c.responseHeadHttpMethod(gc, resp)
+		c.responseHeadHttpMethod(gc, resp.ContentLength)
 		return
 	}
 	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
