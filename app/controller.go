@@ -57,43 +57,48 @@ func (c *Controller) GetRom(gc *gin.Context) {
 	console := gc.Param("console")
 	rom := gc.Param("rom")
 	game := strings.TrimSuffix(rom, filepath.Ext(rom))
-
 	gameplay := c.service.GameplayDetail(console, game)
-
-	resp, err := http.Get(gameplay.RomUrl)
-	if err != nil {
-		gc.Error(err)
-		return
-	}
-	defer resp.Body.Close()
-
 	if gc.Request.Method == "HEAD" {
+		resp, err := http.Head(gameplay.RomUrl)
+		if err != nil {
+			gc.Error(err)
+			return
+		}
 		c.responseHeadHttpMethod(gc, resp.ContentLength)
-		return
+	} else {
+		resp, err := http.Get(gameplay.RomUrl)
+		if err != nil {
+			gc.Error(err)
+			return
+		}
+		defer resp.Body.Close()
+		gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
 	}
-	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
 }
 
 func (c *Controller) GetBios(gc *gin.Context) {
 	console := gc.Param("console")
 	emulator := c.service.GetConsole(console)
-
-	resp, err := http.Get(emulator.BiosUrl)
-	if err != nil {
-		gc.Error(err)
-		return
-	}
-	defer resp.Body.Close()
-
 	if gc.Request.Method == "HEAD" {
+		resp, err := http.Head(emulator.BiosUrl)
+		if err != nil {
+			gc.Error(err)
+			return
+		}
 		c.responseHeadHttpMethod(gc, resp.ContentLength)
-		return
+	} else {
+		resp, err := http.Get(emulator.BiosUrl)
+		if err != nil {
+			gc.Error(err)
+			return
+		}
+		defer resp.Body.Close()
+		gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
 	}
-	gc.DataFromReader(http.StatusOK, resp.ContentLength, "application/octet-stream", resp.Body, map[string]string{})
 }
 
-func NewController() *Controller {
+func NewController(service *Service) *Controller {
 	return &Controller{
-		service: NewService(),
+		service: service,
 	}
 }
