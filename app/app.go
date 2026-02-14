@@ -19,7 +19,10 @@ func CreateApp() *gin.Engine {
 	r.Static("/static", "./static")
 	r.StaticFile("/favicon.ico", "./static/favicon.ico")
 
-	controller := NewController()
+	repository := NewRepository()
+	service := NewService(repository)
+	controller := NewController(service)
+
 	r.Handle("GET", "/", controller.GetIndex)
 	r.Handle("POST", "/gameplay", controller.GameplayRedirect)
 	r.Handle("GET", "/gameplay/:console/:game", controller.Gameplay)

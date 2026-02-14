@@ -5,6 +5,8 @@
 *.bak
 *.swp
 *.zip
+*.tar.bz2
 webgames
 webgames.exe
 __debug_*
+_tmp

@@ -62,9 +62,9 @@ func (s *Service) GameplayDetail(console string, game string) *Gameplay {
 	return gameplay
 }
 
-func NewService() *Service {
+func NewService(repository *Repository) *Service {
 	return &Service{
-		repository: NewRepository(),
+		repository: repository,
 		emulatorOptions: map[string]interface{}{
 			"shader":              "crt-easymode.glslp",
 			"save-state-slot":     1,
