@@ -76,7 +76,7 @@ jobs:
         mkdir -p ./_tmp/webgames
         cp -Rf webgames templates static ./_tmp/webgames
         cd ./_tmp
-        tar -cjvf ./webgames-${{ env.TAG_NAME }}-linux-x86_64.tar.bz2 ./webgames
+        tar -cjvf ../webgames-${{ env.TAG_NAME }}-linux-x86_64.tar.bz2 ./webgames
         cd ..
         rm -Rf ./_tmp/webgames
 
@@ -112,7 +112,7 @@ jobs:
         mkdir -p ./_tmp/webgames
         cp -Rf webgames templates static ./_tmp/webgames
         cd ./_tmp
-        tar -cjvf ./webgames-${{ env.TAG_NAME }}-darwin-arm64.tar.bz2 ./webgames
+        tar -cjvf ../webgames-${{ env.TAG_NAME }}-darwin-arm64.tar.bz2 ./webgames
         cd ..
         rm -Rf ./_tmp/webgames
 
