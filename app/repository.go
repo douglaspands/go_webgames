@@ -43,10 +43,7 @@ func (r *Repository) GetRoms(console string) []Rom {
 		return result
 	}
 	roms := htmlquery.Find(doc, "//*[@id='list']/tbody/tr/td[1]/a//text()")
-	for idx, rom := range roms {
-		if idx == 0 {
-			continue
-		}
+	for _, rom := range roms {
 		if r.containsIgnoreWord(rom.Data) {
 			continue
 		}
@@ -76,7 +73,7 @@ func (r *Repository) GetRom(console string, game string) (*Rom, error) {
 }
 
 func (r Repository) containsIgnoreWord(word string) bool {
-	for _, ignore := range []string{"DLC", "UPDATED", "DEMO", "THEME", "TEST", "BETA", "PROTO", "BIOS", "./", "../"} {
+	for _, ignore := range []string{"PARENT DIRECTORY/", "./", "../", "DLC", "UPDATED", "DEMO", "THEME", "TEST", "PROTO", "BIOS"} {
 		if strings.Contains(strings.ToUpper(word), ignore) {
 			return true
 		}
@@ -100,7 +97,7 @@ func NewRepository() *Repository {
 		{Name: "atari2600", Description: "Atari - 2600", Root: "Atari - 2600"},
 		{Name: "n64", Description: "Nintendo - Nintendo 64", Root: "Nintendo - Nintendo 64 (BigEndian)"},
 		{Name: "psx", Description: "Sony - PlayStation", Root: "Non-Redump - Sony - PlayStation", BiosUrl: "https://raw.githubusercontent.com/Abdess/retroarch_system/5f96368f6dbad5851cdb16a5041fefec4bdcd305/Sony%20-%20PlayStation/scph5001.bin"},
-		// {Name: "psp", Description: "Sony - PlayStation Portable", Root: "Non-Redump - Sony - PlayStation Portable", Threads: true},
+		{Name: "psp", Description: "Sony - PlayStation Portable", Root: "Non-Redump - Sony - PlayStation Portable", Threads: true},
 		{Name: "segaSaturn", Description: "Sega - Sega Saturn", Root: "Non-Redump - Sega - Sega Saturn", BiosUrl: "https://raw.githubusercontent.com/Abdess/retroarch_system/refs/heads/libretro/Sega%20-%20Saturn/saturn_bios.bin"},
 		{Name: "coleco", Description: "Coleco - ColecoVision", Root: "Coleco - ColecoVision", BiosUrl: "https://raw.githubusercontent.com/Abdess/retroarch_system/refs/heads/libretro/Coleco%20-%20ColecoVision/colecovision.rom"},
 	}
