@@ -1,17 +1,4 @@
-package app
-
-type Emulator struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Root        string `json:"root"`
-	BiosUrl     string `json:"biosUrl"`
-	Threads     bool   `json:"threads"`
-}
-
-type Rom struct {
-	Name string `json:"name"`
-	Url  string `json:"url"`
-}
+package resource
 
 type Gameplay struct {
 	Emulator  string `json:"emulator"`

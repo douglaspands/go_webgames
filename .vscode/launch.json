@@ -12,7 +12,10 @@
             "program": "main.go",
             "env": {
                 "GIN_MODE": "debug"
-            }
+            },
+            "args": [
+                "server"
+            ]
         }
     ]
 }

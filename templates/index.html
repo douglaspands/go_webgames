@@ -25,8 +25,8 @@
         <form class="row g-3" action="/gameplay" method="post">
             <div class="col-12">
                 <div class="col-md-4">
-                    <label for="inputEmulator" class="form-label">Console</label>
-                    <select id="inputEmulator" name="emulator" class="form-select">
+                    <label for="inputConsole" class="form-label">Console</label>
+                    <select id="inputConsole" name="console" class="form-select">
                         <option selected disabled>Escolha um console...</option>
                         {{range .data}}
                         <option value="{{.Description}}">{{.Description}}</option>
@@ -36,8 +36,8 @@
             </div>
             <div class="col-12">
                 <div class="col-md-4">
-                    <label for="inputRom" class="form-label">Game</label>
-                    <select id="inputRom" name="rom" class="form-select">
+                    <label for="inputGame" class="form-label">Game</label>
+                    <select id="inputGame" name="game" class="form-select">
                         <option selected disabled>Escolha um game...</option>
                     </select>
                 </div>
