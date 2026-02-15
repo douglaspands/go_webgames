@@ -45,5 +45,5 @@ Siga os passos abaixo para configurar e executar a aplicação localmente:
 > De preferencia para navegadores baseados no `Chromium`.
 
 ## Contribuição
-
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+

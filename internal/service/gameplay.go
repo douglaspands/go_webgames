@@ -62,10 +62,10 @@ func (s *gameplayService) GameplayDetail(console string, game string) *resource.
 				Threads:   emulator.Threads,
 			}
 			parsedURL, _ := url.Parse(gameplay.RomUrl)
-			gameplay.RomRoute = fmt.Sprintf("/download/game/%s/%s", url.PathEscape(emulator.Name), url.PathEscape(path.Base(parsedURL.Path)))
+			gameplay.RomRoute = fmt.Sprintf("/download/game/%s/%s", url.PathEscape(emulator.Description), url.PathEscape(path.Base(parsedURL.Path)))
 			if gameplay.BiosUrl != "" {
 				parsedURL, _ := url.Parse(emulator.BiosUrl)
-				gameplay.BiosRoute = fmt.Sprintf("/download/bios/%s/%s", url.PathEscape(emulator.Name), url.PathEscape(path.Base(parsedURL.Path)))
+				gameplay.BiosRoute = fmt.Sprintf("/download/bios/%s/%s", url.PathEscape(emulator.Description), url.PathEscape(path.Base(parsedURL.Path)))
 			}
 		}
 	}

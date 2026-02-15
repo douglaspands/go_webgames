@@ -22,7 +22,7 @@ type romRepository struct {
 }
 
 func (r *romRepository) GetRoms(emulator *resource.Emulator) []resource.Rom {
-	result, exists := r.consoleRoms[emulator.Name]
+	result, exists := r.consoleRoms[emulator.Description]
 	if !exists {
 		urlConsoleBase := fmt.Sprintf("%s/%s/", r.urlBase, url.PathEscape(emulator.Root))
 		doc, err := htmlquery.LoadURL(urlConsoleBase)
@@ -39,7 +39,7 @@ func (r *romRepository) GetRoms(emulator *resource.Emulator) []resource.Rom {
 				Url:  urlConsoleBase + url.PathEscape(rom.Data),
 			})
 		}
-		r.consoleRoms[emulator.Name] = result
+		r.consoleRoms[emulator.Description] = result
 	}
 	return result
 }
