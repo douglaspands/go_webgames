@@ -1,88 +1,35 @@
-package app
+package repository
 
 import (
-	"errors"
-	"fmt"
-	"net/url"
-	"path/filepath"
 	"sort"
-	"strings"
 
-	"github.com/antchfx/htmlquery"
+	resource "webgames/internal/resource"
 )
 
-type Repository struct {
-	urlBase     string
-	emulators   []Emulator
-	consoleRoms map[string][]Rom
+type EmulatorRepository interface {
+	GetEmulators() []resource.Emulator
+	GetEmulator(console string) *resource.Emulator
 }
 
-func (r *Repository) GetEmulators() []Emulator {
+type emulatorRepository struct {
+	emulators []resource.Emulator
+}
+
+func (r *emulatorRepository) GetEmulators() []resource.Emulator {
 	return r.emulators
 }
 
-func (r *Repository) GetEmulator(console string) (*Emulator, error) {
+func (r *emulatorRepository) GetEmulator(console string) *resource.Emulator {
 	for _, emulator := range r.GetEmulators() {
 		if emulator.Description == console {
-			return &emulator, nil
+			return &emulator
 		}
 	}
-	return nil, errors.New("emulator not found")
+	return nil
 }
 
-func (r *Repository) GetRoms(console string) []Rom {
-	result, exists := r.consoleRoms[console]
-	if exists {
-		return result
-	}
-	emulator, _ := r.GetEmulator(console)
-	root := emulator.Root
-	urlConsoleBase := fmt.Sprintf("%s/%s/", r.urlBase, url.PathEscape(root))
-	doc, err := htmlquery.LoadURL(urlConsoleBase)
-	if err != nil {
-		return result
-	}
-	roms := htmlquery.Find(doc, "//*[@id='list']/tbody/tr/td[1]/a//text()")
-	for _, rom := range roms {
-		if r.containsIgnoreWord(rom.Data) {
-			continue
-		}
-		result = append(result, Rom{
-			Name: strings.TrimSuffix(rom.Data, filepath.Ext(rom.Data)),
-			Url:  urlConsoleBase + url.PathEscape(rom.Data),
-		})
-	}
-	r.consoleRoms[console] = result
-	return r.consoleRoms[console]
-}
-
-func (r *Repository) GetRom(console string, game string) (*Rom, error) {
-	emulator, _ := r.GetEmulator(console)
-	if emulator.Root == "" {
-		fmt.Println("no root found for console:", console)
-		return nil, errors.New("no root found for console")
-	}
-	urls := r.GetRoms(console)
-
-	for _, rom := range urls {
-		if rom.Name == game {
-			return &rom, nil
-		}
-	}
-	return nil, errors.New("rom not found")
-}
-
-func (r Repository) containsIgnoreWord(word string) bool {
-	for _, ignore := range []string{"PARENT DIRECTORY/", "./", "../", "DLC", "UPDATED", "DEMO", "THEME", "TEST", "PROTO", "BIOS"} {
-		if strings.Contains(strings.ToUpper(word), ignore) {
-			return true
-		}
-	}
-	return false
-}
-
-func NewRepository() *Repository {
-	emulatorTable := []Emulator{
+func NewEmulatorRepository() EmulatorRepository {
+	emulatorTable := []resource.Emulator{
 		{Name: "nes", Description: "Nintendo - Nintendo Entertainment System", Root: "Nintendo - Nintendo Entertainment System (Headered)"},
 		{Name: "snes", Description: "Nintendo - Super Nintendo Entertainment System", Root: "Nintendo - Super Nintendo Entertainment System"},
 		{Name: "vb", Description: "Nintendo - Virtual Boy", Root: "Nintendo - Virtual Boy"},
@@ -104,9 +51,7 @@ func NewRepository() *Repository {
 	sort.Slice(emulatorTable, func(i, j int) bool {
 		return emulatorTable[i].Description < emulatorTable[j].Description
 	})
-	return &Repository{
-		urlBase:     "https://myrient.erista.me/files/No-Intro",
-		emulators:   emulatorTable,
-		consoleRoms: make(map[string][]Rom),
+	return &emulatorRepository{
+		emulators: emulatorTable,
 	}
 }
